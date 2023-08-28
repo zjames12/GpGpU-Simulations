@@ -1,0 +1,19 @@
+#SBATCH -J test_file                         # Job name
+#SBATCH -o 8_core_cpu_%j.out                  # output file (%j expands to jobID)
+#SBATCH -e 8_core_cpu_%j.err                  # error log file (%j expands to jobID)
+#SBATCH -N 1                                 # Total number of nodes requested
+#SBATCH -n 8                                 # Total number of cores requested
+#SBATCH -c 8
+#SBATCH --get-user-env                       # retrieve the users login environment
+#SBATCH --mem=20240                           # server memory requested (per node)
+#SBATCH -t 0:10:00                           # Time limit (hh:mm:ss)
+#SBATCH --partition=default_partition        # Request partition
+#SBATCH --constraint="il"
+if [ -n "$SLURM_CPUS_PER_TASK" ]; then
+  omp_threads=$SLURM_CPUS_PER_TASK
+else
+  omp_threads=1
+fi
+echo Number of OpenMP threads: $omp_threads
+export OMP_NUM_THREADS=$omp_threads
+../shell-scripts/cpu.sh
